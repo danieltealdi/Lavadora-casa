@@ -27,6 +27,6 @@ void loop()
 }
     
     void Zero_Cross()                             // FUnción que se activa cada vez que se detecta un cero en el pin 2
-       {    TachoT=mills()-anterior;
-            anterior=TachoT
+       {    TachoT=millis()-anterior;
+            anterior=TachoT;
        }                    
