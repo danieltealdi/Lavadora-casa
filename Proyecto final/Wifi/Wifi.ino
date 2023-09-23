@@ -12,6 +12,7 @@ void setup(void)
 {
   pinMode(LED_BUILTIN, OUTPUT );
   pinMode(RELAY,OUTPUT);
+  pinMode(2,INPUT);
   digitalWrite(RELAY, HIGH);
 	Serial.begin(115200);
 	SPIFFS.begin();
@@ -25,4 +26,7 @@ void setup(void)
 
 void loop(void)
 {
+  if(digitalRead(2)==HIGH){
+    digitalWrite(RELAY, HIGH);
+    }
 }
