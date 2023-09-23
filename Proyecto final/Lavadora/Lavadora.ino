@@ -36,12 +36,30 @@
 #define tCen2 6
 **/ 
 /*Tiempo de cada paso del programa*/
+/***********
+//LAVADO NORMAL
   int tPre=6;
   int tDes=5;
   int tLav=20;
   int tAcl=6;
   int tCen1=0;
   int tCen2=6;
+                       
+//CENTRIFUGADO
+  int tPre=0;
+  int tDes=5;
+  int tLav=0;
+  int tAcl=6;
+  int tCen1=0;
+  int tCen2=6;
+*/                       
+//DESAGUAR Y TERMINAR
+  int tPre=0;
+  int tDes=5;
+  int tLav=0;
+  int tAcl=0;
+  int tCen1=0;
+  int tCen2=0;
                        
 #define Prelavado 0
 #define Desague1 1
@@ -55,6 +73,7 @@
 #define Aclarado3 9
 #define Desague5 10
 #define Centrifugado2 11
+#define FinProg 12
 
 #define TERMINAR 0
 #define CENTRIFUGAR 1
@@ -163,6 +182,9 @@ void setup(){
   else if (digitalRead(A1)==1 && digitalRead(A2)==0){programa=RAPIDO;}
   else if (digitalRead(A1)==0 && digitalRead(A2)==1){programa=CENTRIFUGAR;}
   else if (digitalRead(A1)==0 && digitalRead(A2)==0){programa=TERMINAR;}
+
+  pinMode(FinProg,OUTPUT);
+  digitalWrite(FinProg, LOW);
    
   parado=true;
   //ratioPolea=50;
@@ -311,6 +333,7 @@ void loop(){
       parado=true;
       digitalWrite(DESAGUE, LOW);
       digitalWrite(OCUPADO, LOW);
+      digitalWrite(FinProg, HIGH);
       }
     }
 void Lavar(){      
