@@ -55,7 +55,7 @@
 */                       
 //DESAGUAR Y TERMINAR
   int tPre=0;
-  int tDes=5;
+  int tDes=1;
   int tLav=0;
   int tAcl=0;
   int tCen1=0;
@@ -184,7 +184,7 @@ void setup(){
   else if (digitalRead(A1)==0 && digitalRead(A2)==0){programa=TERMINAR;}
 
   pinMode(FinProg,OUTPUT);
-  digitalWrite(FinProg, LOW);
+  digitalWrite(FinProg, HIGH);
    
   parado=true;
   //ratioPolea=50;
@@ -333,7 +333,7 @@ void loop(){
       parado=true;
       digitalWrite(DESAGUE, LOW);
       digitalWrite(OCUPADO, LOW);
-      digitalWrite(FinProg, HIGH);
+      digitalWrite(FinProg, LOW);
       }
     }
 void Lavar(){      

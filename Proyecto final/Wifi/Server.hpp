@@ -11,13 +11,13 @@ void handleFormText(AsyncWebServerRequest *request)
   //request->send(200, "text/html", response);
 
   if (MiText=="Lavar"){
-    digitalWrite( 2, LOW );
+    //digitalWrite( 2, LOW );
     digitalWrite( 0, LOW );
     Serial.println("ON");
     
     }
   else{
-    digitalWrite( 2, HIGH );
+    //digitalWrite( 2, HIGH );
     digitalWrite( 0, HIGH );
     Serial.println("OFF");
     
