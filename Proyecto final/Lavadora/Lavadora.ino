@@ -53,14 +53,30 @@
   int tCen1=0;
   int tCen2=6;
 */                       
-//DESAGUAR Y TERMINAR
+//LAVADO NORMAL
+  int tPre=6;
+  int tDes1=4;
+  int tDes2=4;
+  int tDes3=4;
+  int tDes4=4;
+  int tDes5=2;
+  int tLav=20;
+  int tAcl=5;
+  int tCen1=0;
+  int tCen2=6;
+             
+  /*/DESAGUAR Y TERMINAR
   int tPre=0;
-  int tDes=1;
+  int tDes1=0;
+  int tDes2=0;
+  int tDes3=0;
+  int tDes4=0;
+  int tDes5=1;
   int tLav=0;
   int tAcl=0;
   int tCen1=0;
   int tCen2=0;
-                       
+  /*/                    
 #define Prelavado 0
 #define Desague1 1
 #define Lavado 2
@@ -282,55 +298,56 @@ void loop(){
     tiempoAnterior=millis();
     frecuencia=1000000/periodoNivel;
     }
-  //Serial.print("tiempoPrograma");
-  //Serial.println(tiempoPrograma);
-  //Serial.print("tic");
-  //Serial.println(tic);
+  Serial.print("tiempoPrograma");
+  Serial.println(tiempoPrograma);
+  Serial.print("tic");
+  Serial.println(tic);
 
     //startflag=true;
     //tiempoPaso=12;
     if(tiempoPrograma<tLav*60000){
+      Serial.println("Lavar");
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes)*60000){
+    else if(tiempoPrograma<(tLav+tDes2)*60000){
       Paso=Desague2;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1)*60000){
       Paso=Centrifugado1;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl)*60000){
       Paso=Aclarado1;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3)*60000){
       Paso=Desague3;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes+tAcl)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl)*60000){
       Paso=Aclarado2;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes+tAcl+tDes)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4)*60000){
       Paso=Desague4;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes+tAcl+tDes+tAcl)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl)*60000){
       Paso=Aclarado3;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes+tAcl+tDes+tAcl+tDes)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5)*60000){
       Paso=Desague5;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes+tCen1+tAcl+tDes+tAcl+tDes+tAcl+tDes+tCen2)*60000){
+    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5+tCen2)*60000){
       Paso=Centrifugado2;
       Desague();
       }
     else{
       startflag=false;
-      parado=true;
+      //parado=true;
       digitalWrite(DESAGUE, LOW);
       digitalWrite(OCUPADO, LOW);
       digitalWrite(FinProg, LOW);

@@ -27,11 +27,11 @@ void setup(void)
 void loop(void)
 {
   
-  //
+  /*/
   delay(100);
   if(digitalRead(2)==LOW){
     Serial.println(digitalRead(2));
     digitalWrite(RELAY, HIGH);
     }
-  //
+  /*/
 }
