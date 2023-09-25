@@ -16,35 +16,8 @@
 #define PULSE 1
 #define nivelLavar 600                              
 #define nivelCale 585 
-/**#define velLavar 3
-#define kp 0.3
-#define ki 0.01
-//#define kd 0
-
-#define tPre 6
-#define tDes 5
-#define tLav 20
-#define tAcl 6
-#define tCen1 0
-#define tCen2 6
-
-#define tPre 0
-#define tDes 2
-#define tLav 0
-#define tAcl 0
-#define tCen1 0
-#define tCen2 6
-**/ 
 /*Tiempo de cada paso del programa*/
-/***********
-//LAVADO NORMAL
-  int tPre=6;
-  int tDes=5;
-  int tLav=20;
-  int tAcl=6;
-  int tCen1=0;
-  int tCen2=6;
-                       
+/***********          
 //CENTRIFUGADO
   int tPre=0;
   int tDes=5;
@@ -125,9 +98,6 @@ volatile unsigned long contador=0;
 volatile double media=0;
 volatile unsigned long lastflash=0;
 volatile unsigned long periodo;
-//volatile int rpm;
-//Tcond 20-625 max. vel.- min. vel.
-//volatile int Tcond;
 int Tmax=625;
 int Tmin=20;
 int programa=TERMINAR;
@@ -144,42 +114,8 @@ unsigned long tiempoAnterior;
 unsigned long tiempoPaso;
 unsigned long medirSegundos=0;
 float frecuencia;
-/*****************/
-/***** ISR *****/
-/*****************/
 
-/*******NIVEL*******/
-void pinChanged(const char* message, bool pinstate) {
-  ahoraCambio=micros();
-  periodoNivel=2*(ahoraCambio-ultimoCambio);
-  ultimoCambio=micros();
- }
-
-void Zero_Cross(){
-  TCCR1B = 0x04;               // start timer with divide by 256 input
-  TCNT1 = 0;                   // reset timer - count from zero
-  OCR1A = Tcond;             // set the compare register brightness desired.
-  }  
-
-ISR(TIMER1_COMPA_vect) {       // comparator match
-  if (startflag == true) {     // flag for start up delay
-    digitalWrite(MOTOR, HIGH);  // set TRIAC gate to high
-    TCNT1 = 65536-PULSE;     // trigger pulse width
-    }
-  }
-
-ISR(TIMER1_OVF_vect) {         // timer1 overflow
-  digitalWrite(MOTOR, LOW);     // turn off TRIAC gate
-  TCCR1B = 0x00;               // disable timer stops unintended triggers
-  }
-
-void _RPM(){                                 // FUnción que se activa cada vez que se detecta un cero en el pin 3
-  //contador++;
-  periodo=micros()-lastflash;
-  lastflash=micros();
-  } 
-
-
+#include "Lavadora.hpp"
 /*****************/
 /***** SETUP *****/
 /*****************/
@@ -229,12 +165,6 @@ void setup(){
   contador=0; 
   velocidad=0;
   pinMode(TACHO, INPUT);
-  //attachInterrupt(digitalPinToInterrupt(TACHO), _RPM, RISING);
- 
-  //!!!!!!!!!!!!aqui está el cambio!!!!!!!!!!!!!
-  
-  
-  /********RPM********/
   
   /********ZERO********/
   pinMode(ZERO, INPUT);
@@ -298,15 +228,9 @@ void loop(){
     tiempoAnterior=millis();
     frecuencia=1000000/periodoNivel;
     }
-  Serial.print("tiempoPrograma");
-  Serial.println(tiempoPrograma);
-  Serial.print("tic");
-  Serial.println(tic);
-
-    //startflag=true;
-    //tiempoPaso=12;
+  
     if(tiempoPrograma<tLav*60000){
-      Serial.println("Lavar");
+      Paso=Lavado;
       Lavar();
       }
     else if(tiempoPrograma<(tLav+tDes2)*60000){
@@ -353,206 +277,6 @@ void loop(){
       digitalWrite(FinProg, LOW);
       }
     }
-void Lavar(){      
-    /*******NIVEL*******/
-    int frecuenciaNivel=nivelCale;
-    if(Paso==Prelavado or Paso==Lavado){frecuenciaNivel=nivelLavar;}
-    digitalWrite(DESAGUE, LOW);
-    if(frecuencia>frecuenciaNivel){
-       if(Paso==Prelavado){
-        digitalWrite(Entrada1,HIGH);
-        digitalWrite(Entrada2,LOW);
-        }
-        else if(Paso==Aclarado3){
-          digitalWrite(Entrada1,HIGH);
-          digitalWrite(Entrada2,HIGH);
-          }
-          else{
-          digitalWrite(Entrada2,HIGH);
-          digitalWrite(Entrada1,LOW);
-          }
-      }
-      else{
-        digitalWrite(Entrada1,LOW);
-        digitalWrite(Entrada2,LOW);
-      }
-    /*******NIVEL*******/
-    //Serial.print("Tcond  : ");
-    //Serial.println(Tcond);
-    //Serial.print("Output  : ");
-    //Serial.println(Output);
-    //Serial.print("Velocidad: ");
-    //Serial.println(velocidad);
-    //Serial.print("RPM: ");
-    //Serial.println(rpm);
-    //Serial.print("Nivel: ");
-    //Serial.println(nivel);
-    //Serial.print("tic: ");
-    //Serial.println(tic);
-    /****/
-    if(tic<1){
-      startflag=true;
-      digitalWrite(ATRAS, LOW);
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<2){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<3){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<4){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<5){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<6){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<7){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<12){
-      startflag=true;
-      velocidad=velLavar;
-      calcularD();
-      }
-    else if(tic<15){
-      startflag=false;
-      velocidad=0;
-      calcularD();
-      }      
-    else if(tic<16){
-      startflag=false;
-      velocidad=0;
-      digitalWrite(ATRAS, HIGH);
-      }      
-    else if(tic<17){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<18){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<19){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<20){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<21){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<22){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<23){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<28){
-      startflag=true;
-      velocidad=velLavar;
-      digitalWrite(ATRAS, HIGH);
-      calcularD();  
-      }  
-    else if(tic<31){
-      startflag=false;
-      velocidad=0;
-      calcularD();
-      }
-    else if(tic<32){
-      startflag=false;
-      velocidad=0;
-      digitalWrite(ATRAS, LOW);
-      }
-    else{
-      tic=0;
-      startflag=true;}
-      
-}
-void Desague(){
-        startflag=true;
-        digitalWrite(ATRAS, LOW);
-        digitalWrite(DESAGUE, HIGH);
-        digitalWrite(Entrada1, LOW); 
-        digitalWrite(Entrada2, LOW); 
-        if(Paso==Centrifugado1){
-          velocidad=350;
-          calcularD();
-          }
-        else if(Paso==Centrifugado2){
-          velocidad=1000;
-          calcularD();
-          }
-        else{
-          velocidad=15;
-          calcularD();
-          }
-    }
-  
- void calcularD(){
-  pidError=rpm-velocidad;
-  //if(pidError>80){digitalWrite(MOTOR, LOW);}
-  myPID.SetOutputLimits(0, 100);
-
-if(startflag){
-  attachInterrupt(digitalPinToInterrupt(ZERO), Zero_Cross, RISING);
-  /**
-  if(pidError<0){
-    myPID.SetTunings(1,0, 0);
-    Tcond=map(Output,0,100,80,600);
-    }else{
-      myPID.SetTunings(1,0,0);
-      Tcond=map(Output,0,100,80,600);
-      }
-    myPID.Compute();
-    }
-    **/
-    myPID.SetTunings(kp,ki,kd);
-    if (Paso==Centrifugado2){
-      Tcond=map(Output,0,100,80,600);
-      }
-      else{
-        Tcond=map(Output,0,100,240,625);
-      }
-    myPID.Compute();
-}    
-else{detachInterrupt(digitalPinToInterrupt(ZERO));}
-}
 
 
 
