@@ -1,4 +1,4 @@
-
+//nuevo
 #define ZERO 2
 #define TACHO 3
 #define MOTOR 4
@@ -11,10 +11,14 @@
 #define DESAGUE 5
 #define OCUPADO 9
 
-#define pulsosPorVuelta 72
+#define pulsosPorVuelta 124
 // number of triac trigger pulse width counts. One count is 16 microseconds
 #define PULSE 1
-#define nivelLavar 600                              
+//tenía
+//nivelLavar 600 y     
+//nivelCale 585 
+//eran demasiado bajos, 500 es casi medio tambor
+#define nivelLavar 590                              
 #define nivelCale 585 
 /**#define velLavar 3
 #define kp 0.3
@@ -54,14 +58,14 @@
   int tCen2=6;
 */                       
 //LAVADO NORMAL
-  int tPre=6;
+  int tPre=12;
   int tDes1=4;
   int tDes2=4;
   int tDes3=4;
   int tDes4=4;
   int tDes5=2;
   int tLav=20;
-  int tAcl=5;
+  int tAcl=10;
   int tCen1=0;
   int tCen2=6;
              
@@ -98,7 +102,7 @@
 
 
 /********PID********/
-#include <PID_v1.h>
+#include <PID_v1_bc.h>
 //Define Variables we'll be connecting to
 double velocidad, rpm, Output, Tcond;
 double pidError;
@@ -285,7 +289,7 @@ void loop(){
     unsigned long rpmPulso=pulseIn(TACHO, HIGH, 50000);
     if(rpmPulso==0){rpm=2;}
     else{
-      rpm=1000000/rpmPulso*60/248;
+      rpm=1000000/rpmPulso*60/124;
       //247 experimental deberia serpusos por vuelta que son 124
       }
     /**RPM**/
@@ -305,43 +309,53 @@ void loop(){
 
     //startflag=true;
     //tiempoPaso=12;
-    if(tiempoPrograma<tLav*60000){
+    if(tiempoPrograma<tPre*60000){
+      Paso=Prelavado;
+      Serial.println("Pre Lavar");
+      Lavar();
+      }
+    
+    else if(tiempoPrograma<(tPre+tDes1)*60000){
+      Paso=Desague1;
+      Desague();
+      }
+    else if(tiempoPrograma<(tPre+tDes1+tLav)*60000){
       Serial.println("Lavar");
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes2)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2)*60000){
       Paso=Desague2;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1)*60000){
       Paso=Centrifugado1;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl)*60000){
       Paso=Aclarado1;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3)*60000){
       Paso=Desague3;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3+tAcl)*60000){
       Paso=Aclarado2;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4)*60000){
       Paso=Desague4;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl)*60000){
       Paso=Aclarado3;
       Lavar();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5)*60000){
       Paso=Desague5;
       Desague();
       }
-    else if(tiempoPrograma<(tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5+tCen2)*60000){
+    else if(tiempoPrograma<(tPre+tDes1+tLav+tDes2+tCen1+tAcl+tDes3+tAcl+tDes4+tAcl+tDes5+tCen2)*60000){
       Paso=Centrifugado2;
       Desague();
       }
